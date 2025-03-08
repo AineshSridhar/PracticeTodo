@@ -1,60 +1,49 @@
-import React, {use, useState} from "react";
+import React, { useState } from 'react'
 
-function ToDoList(){
-    const [tasks, setTasks] = useState(["Eat breakfast", "Take a shower", "Walk the dog"]);
+const ToDoList = () => {
     const [newTask, setNewTask] = useState("");
+    const [tasks, setTasks] = useState([]);
 
-    function handleInputChange(event){
-        setNewTask(event.target.value)
+    const addTask = () => {
+        console.log(newTask);
+        if (newTask.trim() === "") return;
+        setTasks([...tasks, {id: Date.now(), text: newTask, completed: false}]);
+        setNewTask("");
     }
 
-    function addTask(){
-
+    const toggleTask = (id) => {
+        setTasks(tasks.map((task)=>
+            task.id === id ? {...task, completed: !task.completed} : task
+        ))
     }
 
-    function deleteTask(index){
+    const deleteTask = (id) => {
+        setTasks(tasks.filter((task) => task.id !== id));
+    };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        addTask();
     }
-
-    function moveTaskUp(index){
-
-    }
-
-    function moveTaskDown(index){
-
-    }
-
-    return (
-    <div className="to-do-list">
-        <h1>To-Do-List</h1>
-        <div>
-            <input type="text" 
-            placeholder="Enter a task..."
-            value={newTask}
-            onChange={handleInputChange}/>
-        <button className="add-button" onClick="{addTask}">
-            Add
-        </button>
-        </div>
-        <ol>
-            {tasks.map((task, index) => 
-                <li key={index}>
-                    <span className="text">{task}</span>
-                    <div className = "buttons">
-                    <button className="delete-button" onClick={() => deleteTask(index)}>
-                        Delete
-                    </button>
-                    <button className="move-button" onClick={() => moveTaskUp(index)}>
-                        UP
-                    </button>
-                    <button className="move-button" onClick={() => moveTaskDown(index)}>
-                        DOWN
-                    </button>
-                    </div>
-                </li> 
-            )}
-        </ol>
-    </div>);
+  return (
+    <div>
+        <h1 className="text-3xl font-bold flex justify-center mt-10 mb-5">To Do List</h1>
+        <form className="flex justify-center" onSubmit={handleSubmit}>
+            Add Task:
+            <input className="border-2 mx-2 pl-1 py-1 rounded" type="text" value={newTask} onChange={(e) => setNewTask(e.target.value)}/>
+            <button className="bg-green-500 p-1 rounded text-white" onClick={addTask}>Add Task</button>
+        </form>
+      <ul>
+        {tasks.map((task) => (
+            <li key={task.id} className="flex justify-between items-center p-2 border-b">
+                <span className={`cursor-pointer ${task.completed ? "line-through text-gray-500" : ""}`} onClick={() => toggleTask(task.id)}>{task.text}</span>
+                <button className="text-white font-bold p-2 rounded bg-red-500 hover:bg-red-700" onClick={() => deleteTask(task.id)}>Delete Task</button>
+                <button className= "" onClick={() => updateTask(task.id)}>Edit</button>
+            </li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
-export default ToDoList;
+export default ToDoList
